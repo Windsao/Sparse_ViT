@@ -1,5 +1,9 @@
 # Prerequisites
 *.d
+*.pth
+*.ckpt
+Sparse*
+Base*
 
 # Object files
 *.o

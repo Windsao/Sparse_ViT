@@ -125,14 +125,19 @@ class Attention(nn.Module):
             kapa = kapa - kapa.mean(dim=-1).unsqueeze(-1)
             if self.quant:
                 attn = attn.softmax(dim=-1)
-                mask = attn > 0.02
+                mask = attn > 0.002
                 sparse = attn * mask
             kapa_taylor = 1 + kapa + sparse
             kapa_sum_taylor = kapa_taylor.sum(-1).unsqueeze(-1)
             attn_apx_taylor = kapa_taylor / kapa_sum_taylor
             attn = attn_apx_taylor
         else:
-            attn = attn.softmax(dim=-1)
+            if self.quant:
+                attn = attn.softmax(dim=-1)
+                mask = attn > 0.02
+                attn = attn * mask
+            else:
+                attn = attn.softmax(dim=-1)
 
         drop_attn = self.attn_drop(attn)
 
